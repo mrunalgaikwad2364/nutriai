@@ -2,7 +2,7 @@
 
 Your personalised Indian dietician, rebuilt from Streamlit onto FastAPI + Jinja2 + HTMX.
 
-## What changed from v2 (Streamlit)
+## Tech Stack
 
 - **Framework:** Streamlit → FastAPI (backend) + Jinja2 templates + HTMX (frontend)
 - **Auth:** raw SHA-256 password hashing → bcrypt
