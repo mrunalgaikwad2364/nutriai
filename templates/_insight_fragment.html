@@ -1,0 +1,22 @@
+{% if error %}
+<div class="error-msg">{{ error }}</div>
+{% elif insight %}
+<div class="card">
+  <b>🏆 Overall Score: {{ insight.overall_score }}/100</b>
+  <div class="progress-bar-track"><div class="progress-bar-fill" style="width:{{ insight.overall_score }}%; background:{{ '#16A34A' if insight.overall_score >= 70 else '#F59E0B' }};"></div></div>
+  <b>Motivational message:</b> {{ insight.motivational_message }}
+</div>
+<div class="two-col">
+  <div>
+    <b>✅ What's going well</b>
+    <ul>{% for h in insight.highlights %}<li>{{ h }}</li>{% endfor %}</ul>
+  </div>
+  <div>
+    <b>📌 Areas to improve</b>
+    <ul>{% for i in insight.improvements %}<li>{{ i }}</li>{% endfor %}</ul>
+  </div>
+</div>
+{% if insight.next_week_focus %}
+<div class="disclaimer">🎯 <b>Next week's focus:</b> {{ insight.next_week_focus }}</div>
+{% endif %}
+{% endif %}

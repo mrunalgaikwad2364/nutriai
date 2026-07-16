@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Meal Tracker — NutriAI{% endblock %}
+{% block content %}
+<div class="section-title">🧾 Log Today's Meals</div>
+
+{% if no_plan %}
+<div class="card">Generate your plan first (<a href="/profile">My Profile</a>) to enable meal logging.</div>
+{% else %}
+
+<form method="post" action="/tracker/log">
+  <div class="two-col">
+    <div>
+      <label>🌄 Breakfast</label>
+      <textarea name="breakfast" rows="2" placeholder="2 idlis with sambar, filter coffee"></textarea>
+      <label>🍱 Lunch</label>
+      <textarea name="lunch" rows="2" placeholder="Rice, dal, sabzi, curd"></textarea>
+    </div>
+    <div>
+      <label>🌙 Dinner</label>
+      <textarea name="dinner" rows="2" placeholder="2 rotis, paneer sabzi, salad"></textarea>
+      <label>☕ Snacks</label>
+      <textarea name="snacks" rows="2" placeholder="Banana, chai, handful of nuts"></textarea>
+    </div>
+  </div>
+  <button class="btn" type="submit">📊 Analyse & Log</button>
+</form>
+
+{% if entries %}
+<div class="section-title">📋 Today's Log</div>
+{% set target_cal = today_log.target_calories or 0 %}
+{% set target_prot = today_log.target_protein or 0 %}
+
+<div class="metrics-row">
+  <div class="metric-box"><div class="label">🔥 Calories Eaten</div><div class="value">{{ total_cal }} kcal</div></div>
+  <div class="metric-box"><div class="label">🥩 Protein Eaten</div><div class="value">{{ "%.1f"|format(total_prot) }} g</div></div>
+</div>
+
+{% for e in entries %}
+<div class="meal-row">
+  <div class="meal-time" style="min-width:100px">{{ e.meal_type|title }}</div>
+  <div class="meal-body">
+    {{ e.description[:120] }}{{ '…' if e.description|length > 120 else '' }}
+    <br><span class="meal-meta">🔥 {{ e.calories }} kcal &nbsp; 🥩 {{ "%.1f"|format(e.protein_g) }} g protein</span>
+  </div>
+</div>
+{% endfor %}
+
+{% set rem_cal = (target_cal - total_cal) if target_cal > total_cal else 0 %}
+{% set rem_prot = (target_prot - total_prot) if target_prot > total_prot else 0 %}
+{% if rem_cal > 0 or rem_prot > 0 %}
+<div class="card" style="background:#eff6ff;border-color:#bfdbfe; margin-top:14px;">
+  📉 <b>Still to go today:</b> &nbsp; 🔥 {{ rem_cal }} kcal &nbsp; 🥩 {{ "%.1f"|format(rem_prot) }} g protein
+</div>
+{% endif %}
+{% endif %}
+{% endif %}
+{% endblock %}

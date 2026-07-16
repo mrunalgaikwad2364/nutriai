@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}NutriAI — Your Indian Dietician{% endblock %}
+{% block content %}
+<div class="hero">
+  <h1>🥗 NutriAI</h1>
+  <p>Your personalised Indian dietician — powered by Groq (Llama 3.3 70B)</p>
+</div>
+
+<div class="grid-3">
+  <div class="card">
+    <h3>🍛 Indian Cuisine</h3>
+    <p>Meal plans built around your regional cuisine — from Punjabi dals to South Indian breakfasts.</p>
+  </div>
+  <div class="card">
+    <h3>📊 Track Progress</h3>
+    <p>Log daily meals, see your calorie & protein intake, and track trends over weeks.</p>
+  </div>
+  <div class="card">
+    <h3>🧘 Yoga & Exercise</h3>
+    <p>Personalised home workouts and yoga plans matched to your goal and health conditions.</p>
+  </div>
+</div>
+
+{% if not user %}
+<div class="card" style="margin-top:20px; background:#eff6ff; border-color:#bfdbfe;">
+  👋 <a href="/auth"><strong>Create an account or log in</strong></a> to begin your journey.
+</div>
+{% endif %}
+{% endblock %}

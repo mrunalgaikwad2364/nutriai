@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Settings — NutriAI{% endblock %}
+{% block content %}
+<div class="section-title">⚙️ Settings</div>
+
+<div class="card">
+  <h3>Account</h3>
+  <p>Logged in as <strong>{{ user.username }}</strong></p>
+  <a class="btn btn-secondary" href="/logout">🚪 Logout</a>
+</div>
+
+<div class="card">
+  <h3>About NutriAI</h3>
+  <p><strong>Version:</strong> 3.0 (FastAPI)<br>
+  <strong>Stack:</strong> FastAPI · Jinja2 · HTMX · LangGraph · Groq (Llama 3.3 70B) · SQLite<br>
+  <strong>Architecture:</strong> Multi-agent pipeline with Pydantic-validated structured outputs</p>
+  <p><strong>Data:</strong> Your data is stored locally in SQLite. No data is sent to any server except the Groq API for plan generation.</p>
+  <p><strong>Disclaimer:</strong> NutriAI is for informational purposes only and is not a substitute for professional medical or dietary advice.</p>
+</div>
+{% endblock %}

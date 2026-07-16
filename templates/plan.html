@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Today's Plan — NutriAI{% endblock %}
+{% block content %}
+<div class="section-title">🍽️ Today's Personalised Plan</div>
+
+<div class="metrics-row">
+  <div class="metric-box"><div class="label">🔥 Calories</div><div class="value">{{ targets.target_calories or '—' }} kcal</div></div>
+  <div class="metric-box"><div class="label">🥩 Protein</div><div class="value">{{ targets.target_protein_g or '—' }} g</div></div>
+</div>
+
+{% if meal_plan %}
+<div class="section-title">🍛 Meal Plan</div>
+{% if meal_plan.disclaimer %}<div class="disclaimer">⚕️ {{ meal_plan.disclaimer }}</div>{% endif %}
+
+{% if meal_plan.morning_ritual and meal_plan.morning_ritual.description %}
+<div class="card"><b>🌅 Morning Ritual</b> &nbsp; <span style="color:var(--muted)">{{ meal_plan.morning_ritual.time }}</span><br>{{ meal_plan.morning_ritual.description }}</div>
+{% endif %}
+
+{% for key, label in [("breakfast","🌄 Breakfast"), ("mid_morning","☀️ Mid-Morning"), ("lunch","🍱 Lunch"), ("evening_snack","🍵 Evening Snack"), ("dinner","🌙 Dinner")] %}
+  {% set m = meal_plan.get(key) %}
+  {% if m and m['items'] %}
+  <div class="meal-row">
+    <div class="meal-time">{{ m.time }}</div>
+    <div class="meal-body">
+      <b>{{ label }}</b><br>
+      {{ m['items'] | join(' · ') }}<br>
+      <span class="meal-meta">{{ m['description'] }}</span>
+      <span class="meal-meta" style="margin-left:10px">🔥 ~{{ m['approx_calories'] }} kcal &nbsp; 🥩 ~{{ m['approx_protein_g'] }} g protein</span>
+    </div>
+  </div>
+  {% endif %}
+{% endfor %}
+
+{% if meal_plan.hydration_tip %}<div class="card" style="background:#f0fdf4;border-color:#bbf7d0"><b>💧 Hydration:</b> {{ meal_plan.hydration_tip }}</div>{% endif %}
+{% if meal_plan.regional_tip %}<div class="card" style="background:#f0fdf4;border-color:#bbf7d0"><b>🍛 Regional Tip:</b> {{ meal_plan.regional_tip }}</div>{% endif %}
+{% endif %}
+
+{% if exercise_plan %}
+<div class="section-title">🏃 Exercise & Yoga Plan</div>
+<p style="color:var(--muted)">⏱ Total duration: {{ exercise_plan.duration_minutes }} minutes</p>
+{% if exercise_plan.caution %}<div class="disclaimer">⚠️ Caution: {{ exercise_plan.caution }}</div>{% endif %}
+
+{% for key, label in [("warm_up","🔥 Warm-Up"), ("main_workout","💪 Workout"), ("yoga","🧘 Yoga"), ("cool_down","❄️ Cool-Down")] %}
+  {% set items = exercise_plan.get(key) %}
+  {% if items %}
+  <h4>{{ label }}</h4>
+  {% for item in items %}
+  <div class="card">
+    <b>{{ item['name'] or item['asana'] }}</b> &nbsp; <span class="meal-meta">{{ item['sets_reps'] or item['duration'] }}</span><br>
+    <span style="font-size:0.9rem">{{ (item['instructions'] or item['benefit']) or '' }}</span>
+  </div>
+  {% endfor %}
+  {% endif %}
+{% endfor %}
+{% endif %}
+
+<div style="margin-top:24px;">
+  <a class="btn btn-secondary" href="/plan/pdf">📄 Download PDF Report</a>
+</div>
+{% endblock %}

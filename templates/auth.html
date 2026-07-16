@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Login / Register — NutriAI{% endblock %}
+{% block content %}
+<div class="auth-container">
+  <div class="tabs">
+    <a href="#login" onclick="showTab('login')" class="tab-link {{ 'active' if tab=='login' else '' }}" id="tab-login">🔑 Login</a>
+    <a href="#register" onclick="showTab('register')" class="tab-link {{ 'active' if tab=='register' else '' }}" id="tab-register">📝 Register</a>
+  </div>
+
+  {% if error %}<div class="error-msg">{{ error }}</div>{% endif %}
+  {% if success %}<div class="success-msg">{{ success }}</div>{% endif %}
+
+  <div id="login-form" style="display: {{ 'block' if tab=='login' else 'none' }};">
+    <h3>Welcome back 🙏</h3>
+    <form method="post" action="/auth/login">
+      <label>Username</label>
+      <input type="text" name="username" required>
+      <label>Password</label>
+      <input type="password" name="password" required>
+      <button class="btn" type="submit">Login</button>
+    </form>
+  </div>
+
+  <div id="register-form" style="display: {{ 'block' if tab=='register' else 'none' }};">
+    <h3>Create your account</h3>
+    <form method="post" action="/auth/register">
+      <label>Choose a username</label>
+      <input type="text" name="username" required>
+      <label>Email (optional)</label>
+      <input type="email" name="email">
+      <label>Password</label>
+      <input type="password" name="password" required>
+      <label>Confirm password</label>
+      <input type="password" name="password2" required>
+      <button class="btn" type="submit">Create Account</button>
+    </form>
+  </div>
+</div>
+
+<script>
+function showTab(name) {
+  document.getElementById('login-form').style.display = name === 'login' ? 'block' : 'none';
+  document.getElementById('register-form').style.display = name === 'register' ? 'block' : 'none';
+  document.getElementById('tab-login').classList.toggle('active', name === 'login');
+  document.getElementById('tab-register').classList.toggle('active', name === 'register');
+}
+</script>
+{% endblock %}

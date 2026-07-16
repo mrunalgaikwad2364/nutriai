@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}My Profile — NutriAI{% endblock %}
+{% block content %}
+<div class="section-title">👤 Your Health Profile</div>
+<p style="color:var(--muted)">Complete your profile to get a personalised meal plan. We never share your data.</p>
+
+<form method="post" action="/profile">
+  <div class="two-col">
+    <div>
+      <label>Full Name</label>
+      <input type="text" name="name" value="{{ profile.name or '' }}" required>
+      {% if errors.name %}<div class="error-msg">{{ errors.name }}</div>{% endif %}
+
+      <label>Age</label>
+      <input type="number" name="age" min="5" max="120" value="{{ profile.age or 25 }}" required>
+      {% if errors.age %}<div class="error-msg">{{ errors.age }}</div>{% endif %}
+
+      <label>Gender</label>
+      <select name="gender">
+        <option value="male" {{ 'selected' if profile.gender=='male' }}>Male</option>
+        <option value="female" {{ 'selected' if profile.gender=='female' }}>Female</option>
+        <option value="other" {{ 'selected' if profile.gender=='other' }}>Other</option>
+      </select>
+
+      <label>Height (cm)</label>
+      <input type="number" step="0.5" name="height_cm" value="{{ profile.height_cm or 165 }}" required>
+      {% if errors.height_cm %}<div class="error-msg">{{ errors.height_cm }}</div>{% endif %}
+
+      <label>Weight (kg)</label>
+      <input type="number" step="0.5" name="weight_kg" value="{{ profile.weight_kg or 65 }}" required>
+      {% if errors.weight_kg %}<div class="error-msg">{{ errors.weight_kg }}</div>{% endif %}
+    </div>
+
+    <div>
+      <label>Health Goal</label>
+      <select name="goal">
+        {% for g in ["Weight Loss", "Weight Gain", "Balanced / Healthy Diet", "Muscle Building", "Diabetes Management"] %}
+        <option value="{{ g }}" {{ 'selected' if profile.goal==g }}>{{ g }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Diet Preference</label>
+      <select name="diet_pref">
+        {% for d in ["Vegetarian", "Non-Vegetarian", "Vegan", "Eggetarian"] %}
+        <option value="{{ d }}" {{ 'selected' if profile.diet_pref==d }}>{{ d }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Regional Cuisine</label>
+      <select name="region">
+        {% for r in ["North Indian", "South Indian", "East Indian", "West Indian", "Bengali", "Gujarati", "Marathi", "Punjabi", "Rajasthani", "Kerala", "Tamil", "Any"] %}
+        <option value="{{ r }}" {{ 'selected' if profile.region==r }}>{{ r }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Activity Level</label>
+      <select name="activity_level">
+        {% for a in activity_labels %}
+        <option value="{{ a }}" {{ 'selected' if profile.activity_level==a }}>{{ a }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Health Conditions (optional)</label>
+      <textarea name="health_issues" rows="3" placeholder="e.g. PCOS, Type 2 Diabetes, Hypothyroidism">{{ profile.health_issues or '' }}</textarea>
+    </div>
+  </div>
+
+  <button class="btn" type="submit">💾 Save Profile & Generate Plan</button>
+  <p style="color:var(--muted); font-size:0.85rem; margin-top:8px;">This calls the AI pipeline and may take a few seconds — you'll be redirected to your plan when it's ready.</p>
+</form>
+
+<div class="disclaimer" style="margin-top:24px;">
+  ⚕️ <strong>Medical Disclaimer:</strong> NutriAI provides general nutritional guidance for informational purposes only.
+  It is <em>not</em> a substitute for advice from a registered dietitian, nutritionist, or medical doctor.
+  If you have a chronic health condition, please consult your healthcare provider before making significant dietary changes.
+</div>
+{% endblock %}

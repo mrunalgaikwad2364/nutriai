@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Progress — NutriAI{% endblock %}
+{% block content %}
+<div class="section-title">📈 Progress Dashboard</div>
+
+<form method="get" action="/progress">
+  <label style="display:inline-block; margin-right:8px;">Time period</label>
+  <select name="days" onchange="this.form.submit()" style="width:auto; display:inline-block;">
+    <option value="7" {{ 'selected' if days==7 }}>Last 7 days</option>
+    <option value="14" {{ 'selected' if days==14 }}>Last 14 days</option>
+    <option value="30" {{ 'selected' if days==30 }}>Last 30 days</option>
+  </select>
+</form>
+
+{% if not history %}
+<div class="card" style="margin-top:16px;">No data yet for the last {{ days }} days. Start logging meals to see your progress!</div>
+{% else %}
+<div class="card" style="margin-top:16px;">
+  <div style="position:relative; height:280px;">
+    <canvas id="calChart"></canvas>
+  </div>
+</div>
+<div class="card">
+  <div style="position:relative; height:280px;">
+    <canvas id="protChart"></canvas>
+  </div>
+</div>
+
+{% if history|length >= 5 %}
+<button class="btn" hx-post="/progress/insight" hx-target="#insight-area" hx-swap="innerHTML">
+  🤖 Get AI Weekly Insight
+</button>
+<div id="insight-area" style="margin-top:16px;"></div>
+{% endif %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.5.0/chart.umd.min.js"></script>
+<script>
+const history = {{ history_json | safe }};
+const labels = history.map(r => r.log_date);
+
+const baseOptions = (title, unit) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  interaction: { mode: 'index', intersect: false },
+  plugins: {
+    title: {
+      display: true,
+      text: title,
+      font: { size: 14, weight: '500' },
+      color: '#374151',
+      padding: { bottom: 12 }
+    },
+    legend: {
+      position: 'top',
+      align: 'center',
+      labels: { usePointStyle: true, boxWidth: 8, boxHeight: 8, padding: 16, font: { size: 12 } }
+    },
+    tooltip: {
+      callbacks: {
+        label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} ${unit}`
+      }
+    }
+  },
+  scales: {
+    x: {
+      grid: { display: false },
+      ticks: { color: '#6b7280', font: { size: 11 } }
+    },
+    y: {
+      beginAtZero: true,
+      grid: { color: '#f0f0f0' },
+      ticks: { color: '#6b7280', font: { size: 11 } }
+    }
+  }
+});
+
+new Chart(document.getElementById('calChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'Eaten Calories',
+        data: history.map(r => r.eaten_calories),
+        backgroundColor: '#FF9933',
+        borderRadius: 6,
+        maxBarThickness: 48,
+        barPercentage: 0.5,
+        categoryPercentage: 0.6,
+        order: 2
+      },
+      {
+        label: 'Target Calories',
+        data: history.map(r => r.target_calories),
+        type: 'line',
+        borderColor: '#138808',
+        borderDash: [6, 4],
+        borderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#138808',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 2,
+        tension: 0,
+        fill: false,
+        order: 1
+      }
+    ]
+  },
+  options: baseOptions('Calories (Target vs Eaten)', 'kcal')
+});
+
+new Chart(document.getElementById('protChart'), {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: 'Eaten Protein',
+        data: history.map(r => r.eaten_protein),
+        backgroundColor: '#3B82F6',
+        borderRadius: 6,
+        maxBarThickness: 48,
+        barPercentage: 0.5,
+        categoryPercentage: 0.6,
+        order: 2
+      },
+      {
+        label: 'Target Protein',
+        data: history.map(r => r.target_protein),
+        type: 'line',
+        borderColor: '#138808',
+        borderDash: [6, 4],
+        borderWidth: 2,
+        pointRadius: 5,
+        pointHoverRadius: 6,
+        pointBackgroundColor: '#138808',
+        pointBorderColor: '#ffffff',
+        pointBorderWidth: 2,
+        tension: 0,
+        fill: false,
+        order: 1
+      }
+    ]
+  },
+  options: baseOptions('Protein (Target vs Eaten)', 'g')
+});
+</script>
+{% endif %}
+{% endblock %}

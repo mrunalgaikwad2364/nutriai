@@ -1,0 +1,12 @@
+services:
+  nutriai:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - nutriai_data:/app/data   # keeps nutriai.db across container restarts
+
+volumes:
+  nutriai_data:
